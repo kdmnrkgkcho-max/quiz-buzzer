@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>早押し判定ボード</title>
+  <script src="https://js.pusher.com/8.0/pusher.min.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; background: #f0f0f0; }
+    #result { font-size: 3em; color: #ff4757; margin-top: 50px; }
+    .log { margin-top: 20px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>早押しクイズ・判定ボード</h1>
+  <div id="result">準備完了！</div>
+  <div id="log" class="log">ここに履歴が出ます</div>
+
+  <script>
+    // Pusherの初期設定
+    const pusher = new Pusher('12ca5cba0934332011a7', {
+      cluster: 'ap3'
+    });
+
+    // 「quiz-channel」というチャンネルを購読する
+    const channel = pusher.subscribe('quiz-channel');
+
+    // 「buzzer-event」というイベントが届いたら実行
+    channel.bind('buzzer-event', function(data) {
+      document.getElementById('result').innerText = data.name + " さんが押した！";
+      
+      const log = document.createElement('div');
+      log.innerText = new Date().toLocaleTimeString() + " : " + data.name;
+      document.getElementById('log').prepend(log);
+    });
+  </script>
+</body>
+</html>
