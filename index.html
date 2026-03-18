@@ -17,7 +17,8 @@
   <script>
     // Pusherの初期設定
     const pusher = new Pusher('12ca5cba0934332011a7', {
-      cluster: 'ap3'
+      cluster: 'ap3',
+      forceTLS: true
     });
 
     const channel = pusher.subscribe('quiz-channel');
