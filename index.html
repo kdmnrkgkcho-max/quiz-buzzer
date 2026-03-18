@@ -20,18 +20,28 @@
       cluster: 'ap3'
     });
 
-    // 「quiz-channel」というチャンネルを購読する
     const channel = pusher.subscribe('quiz-channel');
 
-  // 「buzzer-event」というイベントが届いたら実行
     channel.bind('buzzer-event', function(data) {
-      // 届いたデータが文字列（そのまま名前）か、オブジェクト（{name: "名前"}）か両方に対応
-      const displayName = (typeof data === 'string') ? data : (data.name || "不明な名前");
-      
-      document.getElementById('result').innerText = displayName + " さんが押した！";
+      // 届いたデータが文字列ならそのまま、オブジェクトなら .name を使う
+      let name = "";
+      if (typeof data === 'string') {
+        try {
+          // 文字列がJSON形式の場合を考慮
+          const parsed = JSON.parse(data);
+          name = parsed.name || "不明";
+        } catch(e) {
+          name = data; // 普通の文字列ならそのまま
+        }
+      } else {
+        name = data.name || "不明";
+      }
+
+      // 画面に表示
+      document.getElementById('result').innerText = name + " さんが押した！";
       
       const log = document.createElement('div');
-      log.innerText = new Date().toLocaleTimeString() + " : " + displayName;
+      log.innerText = new Date().toLocaleTimeString() + " : " + name;
       document.getElementById('log').prepend(log);
     });
   </script>
