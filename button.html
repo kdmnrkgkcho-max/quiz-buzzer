@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>早押しボタン</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding-top: 50px; background: #eee; }
+    input { font-size: 1.2em; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; width: 80%; max-width: 300px; }
+    #btn { width: 250px; height: 250px; border-radius: 50%; font-size: 2.5em; background: #ff4757; color: white; border: none; box-shadow: 0 12px #c0392b; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; }
+    #btn:active { box-shadow: 0 4px #c0392b; transform: translateY(8px); }
+    #btn:disabled { background: #95a5a6; box-shadow: 0 4px #7f8c8d; transform: translateY(8px); }
+    #msg { margin-top: 20px; font-weight: bold; color: #2c3e50; }
+  </style>
+</head>
+<body>
+  <h1>早押しボタン</h1>
+  <input type="text" id="username" placeholder="名前を入力してね"><br>
+  <button id="btn" onclick="pushBuzzer()">PUSH!</button>
+  <p id="msg"></p>
+
+  <script>
+    async function pushBuzzer() {
+      const nameInput = document.getElementById('username');
+      const name = nameInput.value || "名無し";
+      
+      // ↓↓↓ ここにコピーしたGASのURL（execで終わるもの）を貼り付けてください ↓↓↓
+      const gasUrl = "https://script.google.com/macros/s/AKfycbyJsnj0UyvHsFj8MU1KtaFcGcMRC0EKMnKkJApEfp32/dev"; 
+      
+      const btn = document.getElementById('btn');
+      const msg = document.getElementById('msg');
+
+      btn.disabled = true; 
+      msg.innerText = "送信中...";
+
+      try {
+        await fetch(gasUrl, {
+          method: "POST",
+          mode: "no-cors", 
+          body: JSON.stringify({ name: name })
+        });
+        msg.innerText = name + " さん、ナイス押し！";
+      } catch (e) {
+        msg.innerText = "エラーが起きました。";
+        btn.disabled = false;
+      }
+      
+      setTimeout(() => { 
+        btn.disabled = false; 
+        msg.innerText = ""; 
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
